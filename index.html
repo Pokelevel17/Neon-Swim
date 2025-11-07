@@ -1,45 +1,38 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Retro TV — GitHub Hosted Clean YouTube</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Retro TV — YouTube API</title>
 <style>
-:root{--bg:#050505;--accent:#ff6b6b;--muted:#9aa0a6;--glass:rgba(255,255,255,0.04)}
-html,body{height:100%;margin:0;font-family:Inter,ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial;color:#eee;background:linear-gradient(180deg,#020202 0%, #0b0b0f 100%);}
-.app{min-height:100vh;display:grid;grid-template-columns:1fr 360px;gap:20px;padding:24px}
-.player{position:relative;border-radius:12px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.7);background:black}
-iframe{width:100%;height:100%;border:0;pointer-events:none;} /* completely non-interactive */
-.overlay{position:absolute;inset:0;pointer-events:none}
-.channel-id{position:absolute;left:18px;top:18px;background:var(--glass);backdrop-filter:blur(6px);padding:8px 12px;border-radius:6px;font-weight:700;color:var(--accent)}
-.now{position:absolute;left:18px;bottom:18px;padding:10px 12px;background:linear-gradient(180deg, rgba(0,0,0,0.45), rgba(0,0,0,0.6));border-radius:8px;pointer-events:auto}
-.now h3{margin:0;font-size:16px}
-.now p{margin:4px 0 0;font-size:13px;color:var(--muted)}
-.controls{position:absolute;left:50%;transform:translateX(-50%);bottom:28px;display:flex;gap:10px;pointer-events:auto}
-.btn{background:rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.04);padding:10px 14px;border-radius:8px;color:#fff;cursor:pointer}
-.btn.small{padding:6px 8px;font-size:13px}
-.playlist{display:flex;flex-direction:column;gap:12px;padding:18px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:12px;height:calc(100vh - 48px);overflow:auto}
-.branding{display:flex;align-items:center;gap:12px;margin-bottom:8px}
-.logo{width:64px;height:64px;border-radius:8px;background:linear-gradient(135deg,var(--accent),#ffb86b);display:flex;align-items:center;justify-content:center;font-weight:900;color:#111}
-.title{font-size:20px;font-weight:700}
-.desc{color:var(--muted);font-size:13px}
-.channel-switch{margin-bottom:16px;display:flex;gap:8px;pointer-events:auto}
-.channel-switch button{flex:1;padding:10px;border-radius:8px;border:none;cursor:pointer;font-weight:600;background:#111;color:#eee}
-.channel-switch button.active{background:var(--accent);color:#000}
-.show{display:flex;gap:12px;align-items:center;padding:8px;border-radius:8px;cursor:pointer;pointer-events:auto}
-.show:hover{background:rgba(255,255,255,0.02)}
-.thumb{width:84px;height:54px;background:#111;border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--muted)}
-.meta{flex:1}
-.meta h4{margin:0;font-size:14px}
-.meta p{margin:6px 0 0;font-size:12px;color:var(--muted)}
-.footer-note{position:absolute;right:18px;bottom:18px;font-size:11px;color:var(--muted)}
-.static-effect{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:9999;mix-blend-mode:screen;transition:opacity .2s;}
+:root{--bg:#050505;--accent:#ff6b6b;--muted:#9aa0a6;}
+html,body{margin:0;padding:0;height:100%;font-family:sans-serif;color:#eee;background:#050505;}
+.app{display:grid;grid-template-columns:1fr 360px;gap:20px;padding:24px;height:100vh;}
+.player{position:relative;border-radius:12px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.7);background:black;}
+#ytPlayer{width:100%;height:100%;pointer-events:none;} /* disable interaction */
+.overlay{position:absolute;inset:0;pointer-events:none;}
+.channel-id{position:absolute;top:18px;left:18px;background:rgba(255,255,255,0.04);backdrop-filter:blur(6px);padding:8px 12px;border-radius:6px;color:var(--accent);font-weight:700;}
+.now{position:absolute;bottom:18px;left:18px;background:rgba(0,0,0,0.6);padding:10px 12px;border-radius:8px;pointer-events:auto;}
+.controls{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);display:flex;gap:10px;pointer-events:auto;}
+.btn{background:rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.04);padding:10px 14px;border-radius:8px;color:#fff;cursor:pointer;}
+.btn.small{padding:6px 8px;font-size:13px;}
+.playlist{background:rgba(255,255,255,0.02);border-radius:12px;height:100%;overflow:auto;padding:18px;display:flex;flex-direction:column;gap:12px;}
+.channel-switch{display:flex;gap:8px;margin-bottom:16px;pointer-events:auto;}
+.channel-switch button{flex:1;padding:10px;border-radius:8px;border:none;cursor:pointer;font-weight:600;background:#111;color:#eee;}
+.channel-switch button.active{background:var(--accent);color:#000;}
+.show{display:flex;gap:12px;align-items:center;padding:8px;border-radius:8px;cursor:pointer;pointer-events:auto;}
+.show:hover{background:rgba(255,255,255,0.02);}
+.thumb{width:84px;height:54px;background:#111;border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;color:#aaa;}
+.meta{flex:1;}
+.meta h4{margin:0;font-size:14px;}
+.meta p{margin:6px 0 0;font-size:12px;color:#aaa;}
 </style>
 </head>
 <body>
+
 <div class="app">
   <div class="player">
-    <iframe id="ytFrame" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+    <div id="ytPlayer"></div>
     <div class="overlay">
       <div class="channel-id" id="channelName">ADULT SWIM</div>
       <div class="now" id="nowBox">
@@ -50,19 +43,10 @@ iframe{width:100%;height:100%;border:0;pointer-events:none;} /* completely non-i
         <button class="btn small" id="prev">⏮</button>
         <button class="btn small" id="next">⏭</button>
       </div>
-      <div class="footer-note">← → Next/Prev • C Channel</div>
     </div>
-    <div class="static-effect" id="staticEffect"></div>
   </div>
 
   <aside class="playlist" id="sidebar">
-    <div class="branding">
-      <div class="logo">TV</div>
-      <div>
-        <div class="title">Retro TV</div>
-        <div class="desc">YouTube Embedded Channels</div>
-      </div>
-    </div>
     <div class="channel-switch">
       <button id="asBtn" class="active">Adult Swim</button>
       <button id="cnBtn">Cartoon Network</button>
@@ -71,18 +55,17 @@ iframe{width:100%;height:100%;border:0;pointer-events:none;} /* completely non-i
   </aside>
 </div>
 
+<script src="https://www.youtube.com/iframe_api"></script>
 <script>
-let channels = {};
+let channels = {
+  adultswim: ['RSQv7O5IPF0','7ecYoSvGO60'],
+  cartoonnetwork: ['dQw4w9WgXcQ','M7lc1UVf-VE']
+};
+
 let currentChannel = 'adultswim';
 let playlist = [];
 let idx = 0;
-const frame = document.getElementById('ytFrame');
-
-// load videos from videos.json
-fetch('videos.json')
-  .then(r => r.json())
-  .then(data => { channels = data; buildPlaylist(); })
-  .catch(err => console.error('Failed to load video file', err));
+let player;
 
 function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 
@@ -99,24 +82,51 @@ function updateSidebar(){
   });
 }
 
-function loadVideo(){
-  const videoId = playlist[idx];
-  // FULL CLEAN EMBED
-  frame.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&playlist=${videoId}&controls=0&rel=0&modestbranding=1&iv_load_policy=3&fs=0&disablekb=1&playsinline=1`;
-  document.getElementById('nowTitle').textContent = videoId;
+// YT API callback
+function onYouTubeIframeAPIReady(){
+  player = new YT.Player('ytPlayer',{
+    width:'100%',
+    height:'100%',
+    videoId: playlist[idx],
+    playerVars:{
+      autoplay:1,
+      controls:0,
+      rel:0,
+      modestbranding:1,
+      iv_load_policy:3,
+      fs:0,
+      disablekb:1,
+      playsinline:1,
+      loop:1,
+      playlist:playlist[idx]
+    },
+    events:{
+      onReady:onPlayerReady,
+      onStateChange:onPlayerStateChange
+    }
+  });
 }
 
-function nextVideo(){idx=(idx+1)%playlist.length; loadVideo();}
-function prevVideo(){idx=(idx-1+playlist.length)%playlist.length; loadVideo();}
+function onPlayerReady(event){event.target.playVideo();}
+
+function loadVideo(){
+  const videoId = playlist[idx];
+  document.getElementById('nowTitle').textContent = videoId;
+  player.loadVideoById({videoId:videoId, startSeconds:0});
+}
+
+function onPlayerStateChange(event){
+  if(event.data === YT.PlayerState.ENDED){nextVideo();}
+}
+
+function nextVideo(){idx=(idx+1)%playlist.length;loadVideo();}
+function prevVideo(){idx=(idx-1+playlist.length)%playlist.length;loadVideo();}
 
 document.getElementById('asBtn').onclick=()=>switchChannel('adultswim');
 document.getElementById('cnBtn').onclick=()=>switchChannel('cartoonnetwork');
 
 function switchChannel(ch){
   if(ch===currentChannel) return;
-  const staticEl = document.getElementById('staticEffect');
-  staticEl.style.opacity = 1;
-  setTimeout(()=>{staticEl.style.opacity = 0;},300);
   currentChannel = ch;
   document.getElementById('channelName').textContent = ch==='adultswim'?'ADULT SWIM':'CARTOON NETWORK';
   document.getElementById('asBtn').classList.toggle('active',ch==='adultswim');
@@ -124,14 +134,17 @@ function switchChannel(ch){
   buildPlaylist();
 }
 
-document.getElementById('next').onclick = nextVideo;
-document.getElementById('prev').onclick = prevVideo;
+document.getElementById('next').onclick=nextVideo;
+document.getElementById('prev').onclick=prevVideo;
 
 window.addEventListener('keydown', e=>{
   if(e.key==='ArrowRight') nextVideo();
   if(e.key==='ArrowLeft') prevVideo();
-  if(e.key==='c' || e.key==='C') switchChannel(currentChannel==='adultswim'?'cartoonnetwork':'adultswim');
+  if(e.key==='c'||e.key==='C') switchChannel(currentChannel==='adultswim'?'cartoonnetwork':'adultswim');
 });
+
+// Initialize playlist before API loads
+buildPlaylist();
 </script>
 </body>
 </html>
