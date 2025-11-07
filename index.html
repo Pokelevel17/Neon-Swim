@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Retro TV — Random Episodes</title>
+<title>Retro TV — Dynamic Videos</title>
 <style>
 html,body{margin:0;padding:0;height:100%;background:#000;color:#fff;font-family:sans-serif;}
 body{display:flex;align-items:center;justify-content:center;}
@@ -19,21 +19,16 @@ body{display:flex;align-items:center;justify-content:center;}
 </div>
 
 <script>
-// Google Drive videos
-const episodes = [
-  {url:'https://drive.google.com/uc?export=download&id=1mqXyX0Qdd0ur_yplfgTM-8pR7yPT96To', name:'Adult Swim Show 1'},
-  {url:'https://drive.google.com/uc?export=download&id=1exhywk0zfOOwfPEwHKfONVqgS7fk3XL-', name:'Adult Swim Show 2'},
-  {url:'https://drive.google.com/uc?export=download&id=10RUXgrxrQBf6JqaM2G0wlpLFtqwVyqNs', name:'Adult Swim Show 3'},
-  {url:'https://drive.google.com/uc?export=download&id=1x0RZkUzvuqdqLdyAXjiFSSsKR6eYzqH4', name:'Adult Swim Show 4'},
-  {url:'https://drive.google.com/uc?export=download&id=1mVcg29VoRo5EUi28r5xT6QDyq69MTldx', name:'Adult Swim Show 5'},
-  {url:'https://drive.google.com/uc?export=download&id=1gNxfXuHS6PHyeYc0UYNOBoeOMy3WPVGV', name:'Cartoon Network Show 1'},
-  {url:'https://drive.google.com/uc?export=download&id=1-nBZpZvIowCo8DMCcWrL3u9OUbfMKXQq', name:'Cartoon Network Show 2'},
-  {url:'https://drive.google.com/uc?export=download&id=1D_0Tz-pQo_UAXOczqy5MjKKb1-HzeRvG', name:'Cartoon Network Show 3'}
-];
+// Path to your JSON file
+const JSON_URL = 'videos.json';
 
 const player = document.getElementById('player');
 const nowTitle = document.getElementById('nowTitle');
 
+let playlist = [];
+let idx = 0;
+
+// Shuffle function
 function shuffle(array){
   for(let i=array.length-1;i>0;i--){
     const j=Math.floor(Math.random()*(i+1));
@@ -42,11 +37,8 @@ function shuffle(array){
   return array;
 }
 
-// Create shuffled playlist
-let playlist = shuffle([...episodes]);
-let idx = 0;
-
 function loadVideo(){
+  if(playlist.length===0) return;
   const video = playlist[idx];
   player.src = video.url;
   nowTitle.textContent = video.name;
@@ -58,11 +50,20 @@ function nextVideo(){
   loadVideo();
 }
 
-// autoplay next when video ends
 player.addEventListener('ended', nextVideo);
 
-// initialize
-loadVideo();
+// Fetch JSON and initialize
+fetch(JSON_URL)
+  .then(res=>res.json())
+  .then(data=>{
+    // Expecting data to be an array: [{ "url": "...", "name": "..." }, ...]
+    playlist = shuffle(data);
+    loadVideo();
+  })
+  .catch(err=>{
+    console.error('Failed to load videos.json', err);
+    nowTitle.textContent = 'Failed to load playlist';
+  });
 </script>
 </body>
 </html>
