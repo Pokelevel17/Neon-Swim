@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Retro TV — GitHub Hosted</title>
+<title>Retro TV — GitHub Hosted Clean YouTube</title>
 <style>
 :root{--bg:#050505;--accent:#ff6b6b;--muted:#9aa0a6;--glass:rgba(255,255,255,0.04)}
 html,body{height:100%;margin:0;font-family:Inter,ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial;color:#eee;background:linear-gradient(180deg,#020202 0%, #0b0b0f 100%);}
 .app{min-height:100vh;display:grid;grid-template-columns:1fr 360px;gap:20px;padding:24px}
 .player{position:relative;border-radius:12px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.7);background:black}
-iframe{width:100%;height:100%;border:0;pointer-events:none;} /* disable clicks */
+iframe{width:100%;height:100%;border:0;pointer-events:none;} /* completely non-interactive */
 .overlay{position:absolute;inset:0;pointer-events:none}
 .channel-id{position:absolute;left:18px;top:18px;background:var(--glass);backdrop-filter:blur(6px);padding:8px 12px;border-radius:6px;font-weight:700;color:var(--accent)}
 .now{position:absolute;left:18px;bottom:18px;padding:10px 12px;background:linear-gradient(180deg, rgba(0,0,0,0.45), rgba(0,0,0,0.6));border-radius:8px;pointer-events:auto}
@@ -78,12 +78,10 @@ let playlist = [];
 let idx = 0;
 const frame = document.getElementById('ytFrame');
 
+// load videos from videos.json
 fetch('videos.json')
   .then(r => r.json())
-  .then(data => {
-    channels = data;
-    buildPlaylist();
-  })
+  .then(data => { channels = data; buildPlaylist(); })
   .catch(err => console.error('Failed to load video file', err));
 
 function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
@@ -103,7 +101,8 @@ function updateSidebar(){
 
 function loadVideo(){
   const videoId = playlist[idx];
-  frame.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&playlist=${videoId}&rel=0&modestbranding=1&playsinline=1`;
+  // FULL CLEAN EMBED
+  frame.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&playlist=${videoId}&controls=0&rel=0&modestbranding=1&iv_load_policy=3&fs=0&disablekb=1&playsinline=1`;
   document.getElementById('nowTitle').textContent = videoId;
 }
 
