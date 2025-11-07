@@ -19,16 +19,16 @@ iframe{width:100%;height:100%;border:0;pointer-events:none;} /* disable interact
 </div>
 
 <script>
-// Playlist of Google Drive videos (use "preview" links)
+// Playlist of Google Drive videos with preview links
 let playlist = [
-  {url:'https://drive.google.com/file/d/1mqXyX0Qdd0ur_yplfgTM-8pR7yPT96To/preview', name:'Adult Swim Show 1'},
-  {url:'https://drive.google.com/file/d/1exhywk0zfOOwfPEwHKfONVqgS7fk3XL-/preview', name:'Adult Swim Show 2'},
-  {url:'https://drive.google.com/file/d/10RUXgrxrQBf6JqaM2G0wlpLFtqwVyqNs/preview', name:'Adult Swim Show 3'},
-  {url:'https://drive.google.com/file/d/1x0RZkUzvuqdqLdyAXjiFSSsKR6eYzqH4/preview', name:'Adult Swim Show 4'},
-  {url:'https://drive.google.com/file/d/1mVcg29VoRo5EUi28r5xT6QDyq69MTldx/preview', name:'Adult Swim Show 5'},
-  {url:'https://drive.google.com/file/d/1gNxfXuHS6PHyeYc0UYNOBoeOMy3WPVGV/preview', name:'Cartoon Network Show 1'},
-  {url:'https://drive.google.com/file/d/1-nBZpZvIowCo8DMCcWrL3u9OUbfMKXQq/preview', name:'Cartoon Network Show 2'},
-  {url:'https://drive.google.com/file/d/1D_0Tz-pQo_UAXOczqy5MjKKb1-HzeRvG/preview', name:'Cartoon Network Show 3'}
+  {url:'https://drive.google.com/file/d/1mqXyX0Qdd0ur_yplfgTM-8pR7yPT96To/preview?autoplay=1', name:'Adult Swim Show 1'},
+  {url:'https://drive.google.com/file/d/1exhywk0zfOOwfPEwHKfONVqgS7fk3XL-/preview?autoplay=1', name:'Adult Swim Show 2'},
+  {url:'https://drive.google.com/file/d/10RUXgrxrQBf6JqaM2G0wlpLFtqwVyqNs/preview?autoplay=1', name:'Adult Swim Show 3'},
+  {url:'https://drive.google.com/file/d/1x0RZkUzvuqdqLdyAXjiFSSsKR6eYzqH4/preview?autoplay=1', name:'Adult Swim Show 4'},
+  {url:'https://drive.google.com/file/d/1mVcg29VoRo5EUi28r5xT6QDyq69MTldx/preview?autoplay=1', name:'Adult Swim Show 5'},
+  {url:'https://drive.google.com/file/d/1gNxfXuHS6PHyeYc0UYNOBoeOMy3WPVGV/preview?autoplay=1', name:'Cartoon Network Show 1'},
+  {url:'https://drive.google.com/file/d/1-nBZpZvIowCo8DMCcWrL3u9OUbfMKXQq/preview?autoplay=1', name:'Cartoon Network Show 2'},
+  {url:'https://drive.google.com/file/d/1D_0Tz-pQo_UAXOczqy5MjKKb1-HzeRvG/preview?autoplay=1', name:'Cartoon Network Show 3'}
 ];
 
 // Shuffle playlist
@@ -45,16 +45,15 @@ function loadVideo(){
   nowTitle.textContent = video.name;
 }
 
+// Move to next video every X minutes (set to 30 mins per video as example)
 function nextVideo(){
   idx = (idx + 1) % playlist.length;
   loadVideo();
 }
 
-// Loop automatically every ~video duration (estimate 1hr max fallback)
-setInterval(nextVideo, 60*60*1000); // fallback loop
-
-// Initialize first video
+// Auto-start and loop through playlist
 loadVideo();
+setInterval(nextVideo, 30*60*1000); // 30 min per video
 </script>
 
 </body>
