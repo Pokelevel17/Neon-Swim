@@ -3,162 +3,66 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Retro TV — YouTube API</title>
+<title>Retro TV — Random Episodes</title>
 <style>
-:root{--bg:#050505;--accent:#ff6b6b;--muted:#9aa0a6;}
-html,body{margin:0;padding:0;height:100%;font-family:sans-serif;color:#eee;background:#050505;}
-.app{display:grid;grid-template-columns:1fr 360px;gap:20px;padding:24px;height:100vh;}
-.player{position:relative;border-radius:12px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.7);background:black;}
-#ytPlayer{width:100%;height:100%;pointer-events:none;} /* disable interaction */
-.overlay{position:absolute;inset:0;pointer-events:none;}
-.channel-id{position:absolute;top:18px;left:18px;background:rgba(255,255,255,0.04);backdrop-filter:blur(6px);padding:8px 12px;border-radius:6px;color:var(--accent);font-weight:700;}
-.now{position:absolute;bottom:18px;left:18px;background:rgba(0,0,0,0.6);padding:10px 12px;border-radius:8px;pointer-events:auto;}
-.controls{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);display:flex;gap:10px;pointer-events:auto;}
-.btn{background:rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.04);padding:10px 14px;border-radius:8px;color:#fff;cursor:pointer;}
-.btn.small{padding:6px 8px;font-size:13px;}
-.playlist{background:rgba(255,255,255,0.02);border-radius:12px;height:100%;overflow:auto;padding:18px;display:flex;flex-direction:column;gap:12px;}
-.channel-switch{display:flex;gap:8px;margin-bottom:16px;pointer-events:auto;}
-.channel-switch button{flex:1;padding:10px;border-radius:8px;border:none;cursor:pointer;font-weight:600;background:#111;color:#eee;}
-.channel-switch button.active{background:var(--accent);color:#000;}
-.show{display:flex;gap:12px;align-items:center;padding:8px;border-radius:8px;cursor:pointer;pointer-events:auto;}
-.show:hover{background:rgba(255,255,255,0.02);}
-.thumb{width:84px;height:54px;background:#111;border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;color:#aaa;}
-.meta{flex:1;}
-.meta h4{margin:0;font-size:14px;}
-.meta p{margin:6px 0 0;font-size:12px;color:#aaa;}
+html,body{margin:0;padding:0;height:100%;background:#000;color:#fff;font-family:sans-serif;}
+body{display:flex;align-items:center;justify-content:center;}
+.player{position:relative;width:100vw;height:100vh;overflow:hidden;}
+#player{width:100%;height:100%;object-fit:cover;pointer-events:none;background:#000;}
+.now{position:absolute;bottom:20px;left:20px;background:rgba(0,0,0,0.6);padding:12px 16px;border-radius:8px;font-size:1.2rem;font-weight:700;}
 </style>
 </head>
 <body>
-
-<div class="app">
-  <div class="player">
-    <div id="ytPlayer"></div>
-    <div class="overlay">
-      <div class="channel-id" id="channelName">ADULT SWIM</div>
-      <div class="now" id="nowBox">
-        <h3 id="nowTitle">—</h3>
-      </div>
-      <div class="controls">
-        <button class="btn small" id="prev">⏮</button>
-        <button class="btn small" id="next">⏭</button>
-      </div>
-    </div>
-  </div>
-
-  <aside class="playlist" id="sidebar">
-    <div class="channel-switch">
-      <button id="asBtn" class="active">Adult Swim</button>
-      <button id="cnBtn">Cartoon Network</button>
-    </div>
-    <div id="showsList"></div>
-  </aside>
+<div class="player">
+  <video id="player" autoplay muted playsinline></video>
+  <div class="now" id="nowTitle">Loading...</div>
 </div>
 
-<script src="https://www.youtube.com/iframe_api"></script>
 <script>
-let channels = {
-  adultswim: [
-    {id:'RSQv7O5IPF0', name:'Adult Swim Show 1'},
-    {id:'7ecYoSvGO60', name:'Adult Swim Show 2'},
-    {id:'YCKO1qgotHY', name:'Adult Swim Show 3'},
-    {id:'-tQcShonnxs', name:'Adult Swim Show 4'},
-    {id:'F90Qp14n33s', name:'Adult Swim Show 5'}
-  ],
-  cartoonnetwork: [
-    {id:'dQw4w9WgXcQ', name:'Cartoon Network Show 1'},
-    {id:'M7lc1UVf-VE', name:'Cartoon Network Show 2'},
-    {id:'LXb3EKWsInQ', name:'Cartoon Network Show 3'}
-  ]
-};
+// Google Drive videos
+const episodes = [
+  {url:'https://drive.google.com/uc?export=download&id=1mqXyX0Qdd0ur_yplfgTM-8pR7yPT96To', name:'Adult Swim Show 1'},
+  {url:'https://drive.google.com/uc?export=download&id=1exhywk0zfOOwfPEwHKfONVqgS7fk3XL-', name:'Adult Swim Show 2'},
+  {url:'https://drive.google.com/uc?export=download&id=10RUXgrxrQBf6JqaM2G0wlpLFtqwVyqNs', name:'Adult Swim Show 3'},
+  {url:'https://drive.google.com/uc?export=download&id=1x0RZkUzvuqdqLdyAXjiFSSsKR6eYzqH4', name:'Adult Swim Show 4'},
+  {url:'https://drive.google.com/uc?export=download&id=1mVcg29VoRo5EUi28r5xT6QDyq69MTldx', name:'Adult Swim Show 5'},
+  {url:'https://drive.google.com/uc?export=download&id=1gNxfXuHS6PHyeYc0UYNOBoeOMy3WPVGV', name:'Cartoon Network Show 1'},
+  {url:'https://drive.google.com/uc?export=download&id=1-nBZpZvIowCo8DMCcWrL3u9OUbfMKXQq', name:'Cartoon Network Show 2'},
+  {url:'https://drive.google.com/uc?export=download&id=1D_0Tz-pQo_UAXOczqy5MjKKb1-HzeRvG', name:'Cartoon Network Show 3'}
+];
 
-let currentChannel = 'adultswim';
-let playlist = [];
+const player = document.getElementById('player');
+const nowTitle = document.getElementById('nowTitle');
+
+function shuffle(array){
+  for(let i=array.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [array[i],array[j]]=[array[j],array[i]];
+  }
+  return array;
+}
+
+// Create shuffled playlist
+let playlist = shuffle([...episodes]);
 let idx = 0;
-let player;
-
-function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
-
-function buildPlaylist(){
-  playlist = shuffle([...channels[currentChannel]]);
-  idx = 0;
-  updateSidebar();
-  loadVideo();
-}
-
-function updateSidebar(){
-  const list=document.getElementById('showsList');
-  list.innerHTML='';
-  playlist.forEach((video,i)=>{
-    const el=document.createElement('div');el.className='show';
-    el.innerHTML=`<div class="thumb">${i+1}</div><div class="meta"><h4>${video.name}</h4></div>`;
-    el.onclick = ()=>{idx=i; loadVideo();};
-    list.appendChild(el);
-  });
-}
-
-// YouTube API
-function onYouTubeIframeAPIReady(){
-  player = new YT.Player('ytPlayer',{
-    width:'100%',
-    height:'100%',
-    videoId: playlist[idx].id,
-    playerVars:{
-      autoplay:1,
-      controls:0,
-      rel:0,
-      modestbranding:1,
-      iv_load_policy:3,
-      fs:0,
-      disablekb:1,
-      playsinline:1,
-      loop:1,
-      playlist:playlist[idx].id
-    },
-    events:{
-      onReady:onPlayerReady,
-      onStateChange:onPlayerStateChange
-    }
-  });
-}
-
-function onPlayerReady(event){event.target.playVideo();}
 
 function loadVideo(){
   const video = playlist[idx];
-  document.getElementById('nowTitle').textContent = video.name;
-  player.loadVideoById({videoId:video.id, startSeconds:0});
+  player.src = video.url;
+  nowTitle.textContent = video.name;
+  player.play();
 }
 
-function onPlayerStateChange(event){
-  if(event.data === YT.PlayerState.ENDED){nextVideo();}
+function nextVideo(){
+  idx = (idx + 1) % playlist.length;
+  loadVideo();
 }
 
-function nextVideo(){idx=(idx+1)%playlist.length;loadVideo();}
-function prevVideo(){idx=(idx-1+playlist.length)%playlist.length;loadVideo();}
+// autoplay next when video ends
+player.addEventListener('ended', nextVideo);
 
-document.getElementById('asBtn').onclick=()=>switchChannel('adultswim');
-document.getElementById('cnBtn').onclick=()=>switchChannel('cartoonnetwork');
-
-function switchChannel(ch){
-  if(ch===currentChannel) return;
-  currentChannel=ch;
-  document.getElementById('channelName').textContent=ch==='adultswim'?'ADULT SWIM':'CARTOON NETWORK';
-  document.getElementById('asBtn').classList.toggle('active',ch==='adultswim');
-  document.getElementById('cnBtn').classList.toggle('active',ch==='cartoonnetwork');
-  buildPlaylist();
-}
-
-document.getElementById('next').onclick=nextVideo;
-document.getElementById('prev').onclick=prevVideo;
-
-window.addEventListener('keydown', e=>{
-  if(e.key==='ArrowRight') nextVideo();
-  if(e.key==='ArrowLeft') prevVideo();
-  if(e.key==='c'||e.key==='C') switchChannel(currentChannel==='adultswim'?'cartoonnetwork':'adultswim');
-});
-
-// initialize playlist before API loads
-buildPlaylist();
+// initialize
+loadVideo();
 </script>
 </body>
 </html>
